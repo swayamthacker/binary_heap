@@ -1,0 +1,175 @@
+#include<iostream>
+using namespace std;
+const int default_size = 12;
+
+class BinaryHeap
+{
+    public:
+    BinaryHeap();
+    bool isempty();
+    bool isfull();
+    int left(int);
+    int right(int);
+    int parent(int);
+    int delete_element();
+    void getarray();
+    void swap(int *,int *);
+    void maxheap(int);
+    void insert(int);
+    void get_heap();
+
+    private:
+    int heap_size;
+    int array_size;
+    int array[default_size];
+};
+
+BinaryHeap::BinaryHeap()
+{
+    heap_size = -1;
+    array_size = default_size;
+    for(int a = 0;a<array_size;a++)
+    {
+        array[a] = 0;
+    }
+}
+
+bool BinaryHeap::isempty()
+{
+    return heap_size<0;
+}
+
+bool BinaryHeap::isfull()
+{
+    return heap_size>=array_size-1;
+}
+
+int BinaryHeap::left(int i)
+{
+    return 2*i+1;
+}
+
+int BinaryHeap::right(int i)
+{
+    return 2*i+2;
+}
+
+int BinaryHeap::parent(int i)
+{
+    return (i-1)/2;
+}
+
+void BinaryHeap::swap(int* x,int *y)
+{
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+//the below function deletes the root element of the heap
+int BinaryHeap::delete_element()
+{
+    int max = array[0];
+    if(isempty())
+    {
+      cout<<"There are no elements to extract"<<endl;
+      return 0;
+    }
+    else
+    {
+        array[0] = array[heap_size];
+        array[heap_size] = max;
+        heap_size--;
+        maxheap(0);
+        return max;
+    }
+}
+
+void  BinaryHeap::maxheap(int index)
+{
+    int largest  = index;
+    int l  = left(index);
+    int r = right(index);
+
+    if(l<=heap_size && array[l]>array[largest])
+    {
+        largest  = l;
+    }
+    if(r<=heap_size && array[r]>array[largest])
+    {
+        largest  = r;
+    }
+    if(largest!=index)
+    {
+        swap(&array[index],&array[largest]);
+        maxheap(largest);
+    }
+}
+
+void BinaryHeap::insert(int x)
+{
+    if(isfull())
+    {
+		 cout<<"The heap is full"<<endl;
+		 return;
+    }
+    else
+    {
+		 heap_size++;
+		 array[heap_size] = x;
+		 //if x is greater than its parent, then swap with the
+		 // parent. this process will repeat until x gets to its correct spot in the heap.
+		 int store = heap_size;
+		 while(x>array[parent(store)]&&x>0)
+		 {
+		   swap(&array[parent(store)],&array[store]);
+		   int temp = parent(store);
+		   store  = temp;
+		 }
+     }
+}
+
+//dont really need the below function (getarray()) unless you want to check the
+//original array.
+void BinaryHeap::getarray()
+{
+    cout<<"The array arranged according to a max binary heap is: "<<endl;
+    for(int j = 0 ; j<array_size;j++)
+    {
+        cout<<array[j]<<" ";
+    }
+}
+
+void BinaryHeap::get_heap()
+{
+    cout<<"The current max binary heap is: "<<endl;
+    for(int j = 0 ; j<=heap_size;j++)
+    {
+        cout<<array[j]<<" ";
+    }
+}
+
+int main()
+{
+    BinaryHeap BH;
+    int x[] = {6,5,3,1,8,7,2,4,9,12,10,11};
+    //int x[] = {6,5,3,1,8,7,2,4};
+    int size = sizeof(x)/sizeof(x[0]);
+    cout<<"The initial array is:"<<endl;
+    for(int i=0;i<size;i++)
+    {
+        cout<<x[i]<<" ";
+    }
+    cout<<endl;
+    for(int i = 0;i<size;i++)
+    {
+        BH.insert(x[i]);
+    }
+    BH.get_heap();
+
+    cout<<endl<<endl<<"Going to delete the two largest elements in the heap"<<endl;
+    BH.delete_element();
+    BH.delete_element();
+    BH.get_heap();
+    return 0;
+}
